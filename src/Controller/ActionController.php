@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Action;
 use App\Form\ActionType;
 use App\Repository\ActionRepository;
+use App\Utils\FlashMessages;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +15,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/actions')]
 final class ActionController extends AbstractController
 {
+    private const CLASS_SHORT_NAME = 'action';
+
     #[Route(name: 'app_action_index', methods: ['GET'])]
     public function index(ActionRepository $actionRepository): Response
     {
@@ -33,11 +36,7 @@ final class ActionController extends AbstractController
             $entityManager->persist($action);
             $entityManager->flush();
 
-            flash()
-                ->option('position', 'top-left')
-                ->option('timeout', 3000)
-                ->option('direction', 'bottom')
-                ->addSuccess('Your action has been created successfully!');
+            FlashMessages::displayActionMessage(self::CLASS_SHORT_NAME, 0);
 
             return $this->redirect($request->getUri());
         }
@@ -65,11 +64,7 @@ final class ActionController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            flash()
-                ->option('position', 'top-left')
-                ->option('timeout', 3000)
-                ->option('direction', 'bottom')
-                ->addSuccess('Your action has been edited successfully!');
+            FlashMessages::displayActionMessage(self::CLASS_SHORT_NAME, 1);
 
             return $this->redirectToRoute('app_action_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -87,11 +82,7 @@ final class ActionController extends AbstractController
             $entityManager->remove($action);
             $entityManager->flush();
 
-            flash()
-                ->option('position', 'top-left')
-                ->option('timeout', 3000)
-                ->option('direction', 'bottom')
-                ->addSuccess('Your action has been deleted successfully!');
+            FlashMessages::displayActionMessage(self::CLASS_SHORT_NAME, 2);
         }
 
         return $this->redirectToRoute('app_action_index', [], Response::HTTP_SEE_OTHER);
