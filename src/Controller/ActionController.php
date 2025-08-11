@@ -33,6 +33,12 @@ final class ActionController extends AbstractController
             $entityManager->persist($action);
             $entityManager->flush();
 
+            flash()
+                ->option('position', 'top-left')
+                ->option('timeout', 3000)
+                ->option('direction', 'bottom')
+                ->addSuccess('Your action has been created successfully!');
+
             return $this->redirect($request->getUri());
         }
 
@@ -59,6 +65,12 @@ final class ActionController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            flash()
+                ->option('position', 'top-left')
+                ->option('timeout', 3000)
+                ->option('direction', 'bottom')
+                ->addSuccess('Your action has been edited successfully!');
+
             return $this->redirectToRoute('app_action_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -74,6 +86,12 @@ final class ActionController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$action->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($action);
             $entityManager->flush();
+
+            flash()
+                ->option('position', 'top-left')
+                ->option('timeout', 3000)
+                ->option('direction', 'bottom')
+                ->addSuccess('Your action has been deleted successfully!');
         }
 
         return $this->redirectToRoute('app_action_index', [], Response::HTTP_SEE_OTHER);
