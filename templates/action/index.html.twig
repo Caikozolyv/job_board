@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Actions{% endblock %}
+
+{% block body %}
+    <h1>Actions</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Action</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for action in actions %}
+            <tr>
+                <td>{{ action.id }}</td>
+                <td>{{ action.action }}</td>
+                <td>
+                    <a href="{{ path('app_action_show', {'id': action.id}) }}">show</a>
+                    <a href="{{ path('app_action_edit', {'id': action.id}) }}">edit</a>
+                    <a href="{{ path('app_action_delete', {'id': action.id}) }}">delete</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_action_new') }}">Create new</a>
+    <a href="{{ path('app_job_new') }}">back to job creation</a>
+{% endblock %}
