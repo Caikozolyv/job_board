@@ -9,7 +9,6 @@ use App\Entity\Website;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -39,8 +38,8 @@ class JobType extends AbstractType
                 'widget' => 'single_text',
                 'html5' => false,
             ])
-            ->add('salary', IntegerType::class, $this->getDefaultOptions('Salary', false))
-            ->add('asked_salary', IntegerType::class, $this->getDefaultOptions('Salary asked', false))
+            ->add('salary', TextType::class, $this->getDefaultOptions('Salary', false))
+            ->add('asked_salary', TextType::class, $this->getDefaultOptions('Salary asked', false))
             ->add('city', TextType::class, $this->getDefaultOptions('City'))
             ->add('website', EntityType::class, [
                 'class' => Website::class,

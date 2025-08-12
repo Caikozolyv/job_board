@@ -36,11 +36,11 @@ class Job
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $application_date = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $salary = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $salary = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $asked_salary = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $asked_salary = null;
 
     #[ORM\Column(length: 255)]
     private ?string $city = null;
@@ -148,24 +148,24 @@ class Job
         return $this;
     }
 
-    public function getSalary(): ?int
+    public function getSalary(): ?string
     {
         return $this->salary;
     }
 
-    public function setSalary(?int $salary): static
+    public function setSalary(?string $salary): static
     {
         $this->salary = $salary;
 
         return $this;
     }
 
-    public function getAskedSalary(): ?int
+    public function getAskedSalary(): ?string
     {
         return $this->asked_salary;
     }
 
-    public function setAskedSalary(?int $asked_salary): static
+    public function setAskedSalary(?string $asked_salary): static
     {
         $this->asked_salary = $asked_salary;
 
