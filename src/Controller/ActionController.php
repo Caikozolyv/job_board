@@ -47,14 +47,6 @@ final class ActionController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_action_show', methods: ['GET'])]
-    public function show(Action $action): Response
-    {
-        return $this->render('action/show.html.twig', [
-            'action' => $action,
-        ]);
-    }
-
     #[Route('/{id}/edit', name: 'app_action_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Action $action, EntityManagerInterface $entityManager): Response
     {
