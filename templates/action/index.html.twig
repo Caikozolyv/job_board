@@ -20,7 +20,7 @@
                 <td>{{ action.action }}</td>
                 <td>
                     <a href="{{ path('app_action_edit', {'id': action.id}) }}">edit</a>
-                    <a href="{{ path('app_action_delete', {'id': action.id}) }}">delete</a>
+                    {{ include('action/_delete_form.html.twig') }}
                 </td>
             </tr>
         {% else %}
