@@ -39,7 +39,7 @@ final class PresenceController extends AbstractController
 
             FlashMessages::displayActionMessage(self::CLASS_SHORT_NAME, 0);
 
-            return $this->redirectToRoute('app_presence_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirect($request->getUri());
         }
 
         return $this->render('presence/new.html.twig', [

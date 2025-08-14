@@ -39,7 +39,7 @@ final class WebsiteController extends AbstractController
 
             FlashMessages::displayActionMessage(self::CLASS_SHORT_NAME, 0);
 
-            return $this->redirectToRoute('app_website_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirect($request->getUri());
         }
 
         return $this->render('website/new.html.twig', [
