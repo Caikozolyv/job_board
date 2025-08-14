@@ -53,7 +53,7 @@ class JobType extends AbstractType
                 'help' => $this->getNewLinkForClass('app_presence_new', 'presence'),
                 'help_html' => true,
             ])
-            ->add('action', EntityType::class, [
+            ->add('actions', EntityType::class, [
                 'class' => Action::class,
                 'choice_label' => 'action',
                 'multiple' => true,

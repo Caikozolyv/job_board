@@ -52,7 +52,7 @@ class Job
      * @var Collection<int, Action>
      */
     #[ORM\ManyToMany(targetEntity: Action::class, inversedBy: 'jobs')]
-    private Collection $action;
+    private Collection $actions;
 
     #[ORM\Column]
     private ?int $status = null;
@@ -67,7 +67,7 @@ class Job
 
     public function __construct()
     {
-        $this->action = new ArrayCollection();
+        $this->actions = new ArrayCollection();
         $this->contact = new ArrayCollection();
     }
 
@@ -199,15 +199,15 @@ class Job
     /**
      * @return Collection<int, Action>
      */
-    public function getAction(): Collection
+    public function getActions(): Collection
     {
-        return $this->action;
+        return $this->actions;
     }
 
     public function addAction(Action $action): static
     {
-        if (!$this->action->contains($action)) {
-            $this->action->add($action);
+        if (!$this->actions->contains($action)) {
+            $this->actions->add($action);
         }
 
         return $this;
@@ -215,7 +215,7 @@ class Job
 
     public function removeAction(Action $action): static
     {
-        $this->action->removeElement($action);
+        $this->actions->removeElement($action);
 
         return $this;
     }
