@@ -43,9 +43,9 @@ sudo apt install make
 ```
 Build and start the containers
 ```bash
-make init
+make build
 ```
 Go to `localhost:80`
 ## <a name="wsl"></a> Using WLS
 Use WLS branch and follow docker installation.\
-The only change is running `yarn install` as root.
+The only change is running `yarn` commands as root.
