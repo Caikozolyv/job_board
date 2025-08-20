@@ -26,5 +26,9 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress"
+    },
+    "dependencies": {
+        "bootstrap": "^5.3.7",
+        "bootstrap-vue-next": "^0.30.5"
     }
 }
