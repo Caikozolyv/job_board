@@ -31,7 +31,7 @@ export default defineComponent({
     </thead>
     <tbody>
       <tr v-for="values in this.datas['values']" :key="values.id">
-        <td v-for="value in values" :key="value.id">
+        <td v-for="value in values" :key="values.id">
           {{ value }}
         </td>
         <td @click="editLine(values.id)">Edit</td>
