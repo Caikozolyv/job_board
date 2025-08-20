@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\DTO\Table\DataTableAction;
+use App\DTO\Table\TableDTO;
 use App\Entity\Action;
 use App\Form\ActionType;
 use App\Repository\ActionRepository;
@@ -20,8 +22,14 @@ final class ActionController extends AbstractController
     #[Route(name: 'app_action_index', methods: ['GET'])]
     public function index(ActionRepository $actionRepository): Response
     {
-        return $this->render('action/index.html.twig', [
-            'actions' => $actionRepository->findAll(),
+        $actions = $actionRepository->findAll();
+
+        $actionData = new DataTableAction();
+        $dto = new TableDTO($actionData);
+        $formattedActions = $dto->mergeArrays($actions);
+
+        return $this->render('table.html.twig', [
+            'datas' => $formattedActions,
         ]);
     }
 
