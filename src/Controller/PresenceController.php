@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\DTO\Table\DataTablePresence;
+use App\DTO\Table\TableDTO;
 use App\Entity\Presence;
 use App\Form\PresenceType;
 use App\Repository\PresenceRepository;
@@ -21,8 +23,14 @@ final class PresenceController extends AbstractController
     #[Route(name: 'app_presence_index', methods: ['GET'])]
     public function index(PresenceRepository $presenceRepository): Response
     {
-        return $this->render('presence/index.html.twig', [
-            'presences' => $presenceRepository->findAll(),
+        $presences = $presenceRepository->findAll();
+
+        $presenceData = new DataTablePresence();
+        $dto = new TableDTO($presenceData);
+        $formattedPresences = $dto->mergeArrays($presences);
+
+        return $this->render('table.html.twig', [
+            'datas' => $formattedPresences,
         ]);
     }
 
