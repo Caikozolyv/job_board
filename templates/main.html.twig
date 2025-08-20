@@ -3,6 +3,13 @@
 {% block title %}Job board{% endblock %}
 
 {% block body %}
-    <div id="app"></div>
+    <div id="table"></div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mountVueComponent('Table', '#table', {
+                'datas': JSON.parse('{{ datas|json_encode()|escape('js') }}')
+            });
+        });
+    </script>
 {% endblock %}

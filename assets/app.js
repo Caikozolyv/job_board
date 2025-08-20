@@ -1,5 +1,10 @@
 import './styles/app.scss';
 import { createApp } from 'vue';
-import App from './vue/App.vue';
 
-createApp(App).mount('#app');
+// Fonction pour monter des composants dynamiquement
+window.mountVueComponent = function(componentName, selector, props = {}) {
+    console.log(componentName, selector, props);
+    import(`./vue/components/${componentName}.vue`).then(module => {
+        createApp(module.default, props).mount(selector);
+    });
+};
