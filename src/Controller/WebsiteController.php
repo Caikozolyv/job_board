@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\DTO\Table\DataTableWebsite;
+use App\DTO\Table\TableDTO;
 use App\Entity\Website;
 use App\Form\WebsiteType;
 use App\Repository\WebsiteRepository;
@@ -21,8 +23,14 @@ final class WebsiteController extends AbstractController
     #[Route(name: 'app_website_index', methods: ['GET'])]
     public function index(WebsiteRepository $websiteRepository): Response
     {
-        return $this->render('website/index.html.twig', [
-            'websites' => $websiteRepository->findAll(),
+        $websites = $websiteRepository->findAll();
+
+        $websiteData = new DataTableWebsite();
+        $dto = new TableDTO($websiteData);
+        $formattedWebsites = $dto->mergeArrays($websites);
+
+        return $this->render('table.html.twig', [
+            'datas' => $formattedWebsites,
         ]);
     }
 
