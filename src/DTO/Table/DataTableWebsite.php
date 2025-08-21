@@ -8,27 +8,18 @@ use App\Entity\Website;
 
 class DataTableWebsite implements DataTableInterface
 {
-    private const COLS = ['name'];
-    private const OBJECT = 'websites';
-
     public function getNecessaryValues(
         /** @var Website[] $websites */
         array $websites
     ): array {
         $websitesValues = [];
         foreach ($websites as $website) {
-            $websitesValues[$website->getId()] = [$website->getName()];
+            $websitesValues[] =
+                [
+                    'id' => $website->getId(),
+                    'name' => $website->getName()
+                ];
         }
         return $websitesValues;
-    }
-
-    public function getNecessaryColumns(): array
-    {
-        return self::COLS;
-    }
-
-    public function getTableName(): string
-    {
-        return self::OBJECT;
     }
 }

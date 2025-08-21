@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\DTO\Table\DataTableJob;
-use App\DTO\Table\TableDTO;
 use App\Entity\Job;
 use App\Enum\StatusEnum;
 use App\Form\JobType;
@@ -30,13 +29,11 @@ final class JobController extends AbstractController
     public function index(JobRepository $jobRepository): Response
     {
         $jobs = $jobRepository->findAll();
-
         $jobData = new DataTableJob();
-        $dto = new TableDTO($jobData);
-        $formattedJobs = $dto->mergeArrays($jobs);
 
         return $this->render('table.html.twig', [
-            'datas' => $formattedJobs,
+            'objectName' => self::CLASS_SHORT_NAME,
+            'items' => $jobData->getNecessaryValues($jobs),
         ]);
     }
 

@@ -8,27 +8,17 @@ use App\Entity\Action;
 
 class DataTableAction implements DataTableInterface
 {
-    private const COLS = ['name'];
-    private const OBJECT = 'actions';
-
     public function getNecessaryValues(
         /** @var Action[] $actions */
         array $actions
     ): array {
         $actionsValues = [];
         foreach ($actions as $action) {
-            $actionsValues[$action->getId()] = [$action->getAction()];
+            $actionsValues[] = [
+                'id' => $action->getId(),
+                'name' => $action->getAction()
+            ];
         }
         return $actionsValues;
-    }
-
-    public function getNecessaryColumns(): array
-    {
-        return self::COLS;
-    }
-
-    public function getTableName(): string
-    {
-        return self::OBJECT;
     }
 }

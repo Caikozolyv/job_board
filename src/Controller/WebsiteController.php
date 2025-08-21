@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\DTO\Table\DataTableWebsite;
-use App\DTO\Table\TableDTO;
 use App\Entity\Website;
 use App\Form\WebsiteType;
 use App\Repository\WebsiteRepository;
@@ -24,13 +23,11 @@ final class WebsiteController extends AbstractController
     public function index(WebsiteRepository $websiteRepository): Response
     {
         $websites = $websiteRepository->findAll();
-
         $websiteData = new DataTableWebsite();
-        $dto = new TableDTO($websiteData);
-        $formattedWebsites = $dto->mergeArrays($websites);
 
         return $this->render('table.html.twig', [
-            'datas' => $formattedWebsites,
+            'objectName' => self::CLASS_SHORT_NAME,
+            'items' => $websiteData->getNecessaryValues($websites),
         ]);
     }
 
