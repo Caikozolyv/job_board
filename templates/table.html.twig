@@ -8,7 +8,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             mountVueComponent('Table', '#table', {
-                'datas': JSON.parse('{{ datas|json_encode()|escape('js') }}')
+                'objectName': JSON.parse('{{ objectName|json_encode()|escape('js') }}'),
+                'items': JSON.parse('{{ items|json_encode()|escape('js') }}')
             });
         });
     </script>

@@ -1,8 +1,10 @@
 <script>
 import {defineComponent, capitalize} from 'vue'
+import {BButton, BButtonGroup, BContainer, BTable} from "bootstrap-vue-next";
 
 export default defineComponent({
   name: "Table.vue",
+  components: {BButtonGroup, BButton, BContainer, BTable},
   methods: {
     capitalize,
     editLine(objectId) {
@@ -10,35 +12,49 @@ export default defineComponent({
     },
     deleteLine(objectId) {
 
+    },
+    updateStatus(objectId) {
+
     }
   },
   props: {
-    datas: Array
+    items: Array,
+    objectName: String
+  },
+  computed: {
+    displayFields() {
+      let itemsKeys = Object.keys(this.items[0]);
+      if (itemsKeys.includes('id')) {
+        itemsKeys.splice(itemsKeys.indexOf('id'), 1)
+      }
+      itemsKeys.push('actions');
+      return itemsKeys;
+    }
   }
 })
 </script>
 
 <template>
-  <h1 class="title">{{ capitalize(this.datas['object']) }}</h1>
-  <table>
-    <thead>
-      <tr>
-        <th v-for="column in this.datas['cols']" :key="column.id">
-          {{ column }}
-        </th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="values in this.datas['values']" :key="values.id">
-        <td v-for="value in values" :key="values.id">
-          {{ value }}
-        </td>
-        <td @click="editLine(values.id)">Edit</td>
-        <td @click="deleteLine(values.id)">Delete</td>
-      </tr>
-    </tbody>
-  </table>
+  <h1>{{ capitalize(this.objectName) }}</h1>
+  <b-container>
+    <BTable
+        striped
+        hover
+        :items="this.items"
+        :fields="this.displayFields"
+        :primary-key="id"
+    >
+      <template #cell(actions)="data">
+        <BButtonGroup size="sm">
+          <BButton variant="primary" @click="editLine(id)">Edit</BButton>
+          <BButton variant="danger" @click="deleteLine(id)">Delete</BButton>
+          <BButton variant="warning" @click="updateStatus(id)">Update</BButton>
+        </BButtonGroup>
+      </template>
+
+    </BTable>
+    <BButton size="sm" variant="success">Create new</BButton>
+  </b-container>
 </template>
 
 <style scoped>
