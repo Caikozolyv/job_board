@@ -16,18 +16,14 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/websites')]
 final class WebsiteController extends AbstractController
 {
-    private const CLASS_SHORT_NAME = 'website';
+    private const CLASS_SHORT_NAME = 'websites';
 
 
     #[Route(name: 'app_website_index', methods: ['GET'])]
-    public function index(WebsiteRepository $websiteRepository): Response
+    public function index(): Response
     {
-        $websites = $websiteRepository->findAll();
-        $websiteData = new DataTableWebsite();
-
         return $this->render('table.html.twig', [
             'objectName' => self::CLASS_SHORT_NAME,
-            'items' => $websiteData->getNecessaryValues($websites),
         ]);
     }
 

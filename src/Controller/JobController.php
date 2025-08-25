@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/jobs')]
 final class JobController extends AbstractController
 {
-    private const CLASS_SHORT_NAME = 'job';
+    private const CLASS_SHORT_NAME = 'jobs';
 
     #[Route('/', name: 'default', methods: ['GET'])]
     public function defaultAction(): Response
@@ -26,14 +26,10 @@ final class JobController extends AbstractController
     }
 
     #[Route(name: 'app_job_index', methods: ['GET'])]
-    public function index(JobRepository $jobRepository): Response
+    public function index(): Response
     {
-        $jobs = $jobRepository->findAll();
-        $jobData = new DataTableJob();
-
         return $this->render('table.html.twig', [
             'objectName' => self::CLASS_SHORT_NAME,
-            'items' => $jobData->getNecessaryValues($jobs),
         ]);
     }
 

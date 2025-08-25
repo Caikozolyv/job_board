@@ -1,12 +1,52 @@
 <script>
 import {defineComponent, capitalize} from 'vue'
 import {BButton, BButtonGroup, BContainer, BTable} from "bootstrap-vue-next";
+import axios from "axios";
 
 export default defineComponent({
   name: "Table.vue",
+  data() {
+    return {
+      createMode: false,
+      items: [],
+      displayFields: [],
+    }
+  },
+  async mounted() {
+    let self = this;
+    await axios
+        .get('http://localhost/api/' + this.objectName, {},
+            {
+              headers: {
+                'Content-type': 'application/ld+json'
+              }
+            })
+        .then(function(response) {
+          self.items = response.data.member;
+          let itemsKeys = Object.keys(response.data.member[0]);
+          // if (itemsKeys.includes('id')) {
+          //   itemsKeys.splice(itemsKeys.indexOf('id'), 1)
+          // }
+          let itemsKeysFiltered = itemsKeys.filter((key) => !key.startsWith("@"));
+          itemsKeysFiltered.push('actions')
+          self.displayFields = itemsKeysFiltered;
+        })
+        .catch(error => {
+          console.log(error.response);
+        });
+  },
   components: {BButtonGroup, BButton, BContainer, BTable},
   methods: {
     capitalize,
+    createNew() {
+      this.createMode = !this.createMode;
+    },
+    validate() {
+
+    },
+    goToJobBoard() {
+
+    },
     editLine(objectId) {
 
     },
@@ -18,19 +58,8 @@ export default defineComponent({
     }
   },
   props: {
-    items: Array,
-    objectName: String
+    objectName: String,
   },
-  computed: {
-    displayFields() {
-      let itemsKeys = Object.keys(this.items[0]);
-      if (itemsKeys.includes('id')) {
-        itemsKeys.splice(itemsKeys.indexOf('id'), 1)
-      }
-      itemsKeys.push('actions');
-      return itemsKeys;
-    }
-  }
 })
 </script>
 
@@ -53,7 +82,14 @@ export default defineComponent({
       </template>
 
     </BTable>
-    <BButton size="sm" variant="success">Create new</BButton>
+    <b-container v-if="createMode">
+<!--  form component    -->
+    </b-container>
+    <div v-else>
+      <BButton @click="createNew()" size="sm" variant="success">Create new {{ objectName }}</BButton>
+      <BButton href="http://localhost/jobs" size="sm">Back to job board</BButton>
+    </div>
+
   </b-container>
 </template>
 

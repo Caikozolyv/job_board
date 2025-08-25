@@ -16,18 +16,14 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/presences')]
 final class PresenceController extends AbstractController
 {
-    private const CLASS_SHORT_NAME = 'presence';
+    private const CLASS_SHORT_NAME = 'presences';
 
 
     #[Route(name: 'app_presence_index', methods: ['GET'])]
-    public function index(PresenceRepository $presenceRepository): Response
+    public function index(): Response
     {
-        $presences = $presenceRepository->findAll();
-        $presenceData = new DataTablePresence();
-
         return $this->render('table.html.twig', [
             'objectName' => self::CLASS_SHORT_NAME,
-            'items' => $presenceData->getNecessaryValues($presences),
         ]);
     }
 

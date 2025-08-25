@@ -16,17 +16,13 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/actions')]
 final class ActionController extends AbstractController
 {
-    private const CLASS_SHORT_NAME = 'action';
+    private const CLASS_SHORT_NAME = 'actions';
 
     #[Route(name: 'app_action_index', methods: ['GET'])]
-    public function index(ActionRepository $actionRepository): Response
+    public function index(): Response
     {
-        $actions = $actionRepository->findAll();
-        $actionData = new DataTableAction();
-
         return $this->render('table.html.twig', [
             'objectName' => self::CLASS_SHORT_NAME,
-            'items' => $actionData->getNecessaryValues($actions),
         ]);
     }
 
