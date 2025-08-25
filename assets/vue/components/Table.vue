@@ -1,6 +1,7 @@
 <script>
 import {defineComponent, capitalize} from 'vue'
 import {BButton, BButtonGroup, BContainer, BTable} from "bootstrap-vue-next";
+import Form from './Form.vue';
 import axios from "axios";
 
 export default defineComponent({
@@ -35,7 +36,7 @@ export default defineComponent({
           console.log(error.response);
         });
   },
-  components: {BButtonGroup, BButton, BContainer, BTable},
+  components: {Form, BButtonGroup, BButton, BContainer, BTable},
   methods: {
     capitalize,
     createNew() {
@@ -59,6 +60,7 @@ export default defineComponent({
   },
   props: {
     objectName: String,
+    formFields: Object
   },
 })
 </script>
@@ -83,7 +85,7 @@ export default defineComponent({
 
     </BTable>
     <b-container v-if="createMode">
-<!--  form component    -->
+      <Form :formFields="this.formFields" :objectName="this.objectName" @cancel="createNew()"/>
     </b-container>
     <div v-else>
       <BButton @click="createNew()" size="sm" variant="success">Create new {{ objectName }}</BButton>

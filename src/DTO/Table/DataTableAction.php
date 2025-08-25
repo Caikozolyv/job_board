@@ -16,9 +16,19 @@ class DataTableAction implements DataTableInterface
         foreach ($actions as $action) {
             $actionsValues[] = [
                 'id' => $action->getId(),
-                'name' => $action->getAction()
+                'name' => $action->getName()
             ];
         }
         return $actionsValues;
+    }
+
+    public function getFieldsType(): array
+    {
+        return [
+            'name' => [
+                'type' => 'text',
+                'content' => ''
+            ]
+        ];
     }
 }

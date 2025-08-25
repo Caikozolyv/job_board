@@ -22,4 +22,14 @@ class DataTableWebsite implements DataTableInterface
         }
         return $websitesValues;
     }
+
+    public function getFieldsType(): array
+    {
+        return [
+            'name' => [
+                'type' => 'text',
+                'content' => ''
+            ]
+        ];
+    }
 }

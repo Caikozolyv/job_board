@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\DTO\Table\DataTableAction;
 use App\Entity\Action;
 use App\Form\ActionType;
-use App\Repository\ActionRepository;
 use App\Utils\FlashMessages;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,8 +20,11 @@ final class ActionController extends AbstractController
     #[Route(name: 'app_action_index', methods: ['GET'])]
     public function index(): Response
     {
+        $actionData = new DataTableAction();
+
         return $this->render('table.html.twig', [
             'objectName' => self::CLASS_SHORT_NAME,
+            'formFields' => $actionData->getFieldsType(),
         ]);
     }
 

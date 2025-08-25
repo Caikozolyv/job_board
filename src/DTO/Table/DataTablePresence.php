@@ -17,9 +17,19 @@ class DataTablePresence implements DataTableInterface
             $presencesValues[] =
                 [
                     'id' => $presence->getId(),
-                    'name' => $presence->getPresence()
+                    'name' => $presence->getName()
                 ];
         }
         return $presencesValues;
+    }
+
+    public function getFieldsType(): array
+    {
+        return [
+            'name' => [
+                'type' => 'text',
+                'content' => ''
+            ]
+        ];
     }
 }

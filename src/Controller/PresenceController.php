@@ -22,8 +22,11 @@ final class PresenceController extends AbstractController
     #[Route(name: 'app_presence_index', methods: ['GET'])]
     public function index(): Response
     {
+        $dataPresence = new DataTablePresence();
+
         return $this->render('table.html.twig', [
             'objectName' => self::CLASS_SHORT_NAME,
+            'formFields' => $dataPresence->getFieldsType(),
         ]);
     }
 

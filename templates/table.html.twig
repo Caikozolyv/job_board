@@ -9,6 +9,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             mountVueComponent('Table', '#table', {
                 'objectName': JSON.parse('{{ objectName|json_encode()|escape('js') }}'),
+                'formFields': JSON.parse('{{ formFields|json_encode()|escape('js') }}'),
             });
         });
     </script>

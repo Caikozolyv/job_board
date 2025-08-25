@@ -22,8 +22,11 @@ final class WebsiteController extends AbstractController
     #[Route(name: 'app_website_index', methods: ['GET'])]
     public function index(): Response
     {
+        $dataWebsite = new DataTableWebsite();
+
         return $this->render('table.html.twig', [
             'objectName' => self::CLASS_SHORT_NAME,
+            'formFields' => $dataWebsite->getFieldsType(),
         ]);
     }
 
