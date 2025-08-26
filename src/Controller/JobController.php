@@ -2,11 +2,10 @@
 
 namespace App\Controller;
 
-use App\DTO\Table\DataTableJob;
+use App\DTO\Form\DataFormJob;
 use App\Entity\Job;
 use App\Enum\StatusEnum;
 use App\Form\JobType;
-use App\Repository\JobRepository;
 use App\Utils\FlashMessages;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,10 +25,13 @@ final class JobController extends AbstractController
     }
 
     #[Route(name: 'app_job_index', methods: ['GET'])]
-    public function index(): Response
+    public function index(EntityManagerInterface $em): Response
     {
+        $jobData = new DataFormJob($em);
+
         return $this->render('table.html.twig', [
             'objectName' => self::CLASS_SHORT_NAME,
+            'formFields' => $jobData->getFieldsType()
         ]);
     }
 
