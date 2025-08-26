@@ -7,13 +7,17 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use App\DTO\JobInput;
 use App\Enum\StatusEnum;
 use App\Repository\JobRepository;
+use App\State\JobStateProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 #[ApiResource(
     operations: [
@@ -33,7 +37,10 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
                 'actions_to_take'
             ]]
         ),
-        new Post(),
+        new Post(
+            input: JobInput::class,
+            processor: JobStateProcessor::class
+        ),
         new Delete(),
         new Patch()
     ]
@@ -59,9 +66,11 @@ class Job
     #[ORM\JoinColumn(nullable: false)]
     private ?Website $website = null;
 
+    #[Context(normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'd-m-Y'])]
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTime $creation_date = null;
 
+    #[Context(normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'd-m-Y'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $application_date = null;
 
