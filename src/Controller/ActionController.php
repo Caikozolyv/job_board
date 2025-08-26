@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\DTO\Table\DataTableAction;
+use App\DTO\Form\DataFormDefault;
 use App\Entity\Action;
 use App\Form\ActionType;
 use App\Utils\FlashMessages;
@@ -20,7 +20,7 @@ final class ActionController extends AbstractController
     #[Route(name: 'app_action_index', methods: ['GET'])]
     public function index(): Response
     {
-        $actionData = new DataTableAction();
+        $actionData = new DataFormDefault();
 
         return $this->render('table.html.twig', [
             'objectName' => self::CLASS_SHORT_NAME,

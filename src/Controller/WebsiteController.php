@@ -2,10 +2,9 @@
 
 namespace App\Controller;
 
-use App\DTO\Table\DataTableWebsite;
+use App\DTO\Form\DataFormDefault;
 use App\Entity\Website;
 use App\Form\WebsiteType;
-use App\Repository\WebsiteRepository;
 use App\Utils\FlashMessages;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,7 +21,7 @@ final class WebsiteController extends AbstractController
     #[Route(name: 'app_website_index', methods: ['GET'])]
     public function index(): Response
     {
-        $dataWebsite = new DataTableWebsite();
+        $dataWebsite = new DataFormDefault();
 
         return $this->render('table.html.twig', [
             'objectName' => self::CLASS_SHORT_NAME,

@@ -2,10 +2,9 @@
 
 namespace App\Controller;
 
-use App\DTO\Table\DataTablePresence;
+use App\DTO\Form\DataFormDefault;
 use App\Entity\Presence;
 use App\Form\PresenceType;
-use App\Repository\PresenceRepository;
 use App\Utils\FlashMessages;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,7 +21,7 @@ final class PresenceController extends AbstractController
     #[Route(name: 'app_presence_index', methods: ['GET'])]
     public function index(): Response
     {
-        $dataPresence = new DataTablePresence();
+        $dataPresence = new DataFormDefault();
 
         return $this->render('table.html.twig', [
             'objectName' => self::CLASS_SHORT_NAME,
