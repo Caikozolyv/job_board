@@ -1,6 +1,6 @@
 <script>
 import {capitalize, defineComponent} from 'vue'
-import {BButton, BContainer, BFormInput, BRow, BToast} from "bootstrap-vue-next";
+import {BButton, BContainer, BFormInput, BRow, BToast, BFormSelect} from "bootstrap-vue-next";
 import axios from 'axios'
 
 export default defineComponent({
@@ -10,10 +10,11 @@ export default defineComponent({
       text: '',
       // axiosToast: false,
       // axiosMessage: '',
-      values: this.formFields
+      values: this.formFields,
+      selected: null
     }
   },
-  components: {BToast, BButton, BFormInput, BRow, BContainer},
+  components: {BToast, BButton, BFormInput, BRow, BContainer, BFormSelect},
   props: ['formFields', 'objectName'],
   emits: ['cancel'],
   methods: {
@@ -47,7 +48,12 @@ export default defineComponent({
       let keys = (Object.keys(this.formFields));
       let dataToSend = {};
       for (let i = 0; i < keys.length; i++) {
-        dataToSend[keys[i]] = this.formFields[keys[i]].content;
+        if (this.formFields[keys[i]].content) {
+          dataToSend[keys[i]] = this.formFields[keys[i]].content;
+        } else {
+          dataToSend[keys[i]] = this.formFields[keys[i]].selected;
+
+        }
       }
       return dataToSend;
     }
@@ -65,7 +71,14 @@ export default defineComponent({
         class="my-1"
     >
       <label :for="index">{{ index }}</label>
+      <BFormSelect
+        v-if="field['type'] === 'select'"
+        :options="field['options']"
+        v-model="field['selected']"
+        :multiple="!!field['multiple']"
+      />
       <BFormInput
+        v-else
         :id="index"
         :type="field['type']"
         v-model="field['content']"
