@@ -51,8 +51,26 @@ export default defineComponent({
     editLine(objectId) {
 
     },
-    deleteLine(objectId) {
-
+    async deleteLine(item) {
+      let self = this;
+      await axios
+        .delete('http://localhost/api/' + this.objectName + '/' + item.id, {},
+            {
+              headers: {
+                'Content-type': 'application/ld+json'
+              }
+            })
+        .then(function(response) {
+          if (response.status === 204) {
+            let index = self.items.indexOf(item);
+            if (index !== -1) {
+              self.items.splice(index, 1);
+            }
+          }
+        })
+        .catch(error => {
+          console.log(error.response);
+        });
     },
     updateStatus(objectId) {
 
@@ -73,12 +91,12 @@ export default defineComponent({
         hover
         :items="this.items"
         :fields="this.displayFields"
-        :primary-key="id"
+        :primary-key="this.items.id"
     >
-      <template #cell(actions)="data">
+      <template #cell(actions)="row">
         <BButtonGroup size="sm">
           <BButton variant="primary" @click="editLine(id)">Edit</BButton>
-          <BButton variant="danger" @click="deleteLine(id)">Delete</BButton>
+          <BButton variant="danger" @click="deleteLine(row.item)">Delete</BButton>
           <BButton variant="warning" @click="updateStatus(id)">Update</BButton>
         </BButtonGroup>
       </template>
