@@ -107,7 +107,7 @@ export default defineComponent({
     </b-container>
     <div v-else>
       <BButton @click="createNew()" size="sm" variant="success">Create new {{ objectName }}</BButton>
-      <BButton href="http://localhost/jobs" size="sm">Back to job board</BButton>
+      <BButton v-if="this.objectName !== 'jobs'" href="http://localhost/jobs" size="sm">Back to job board</BButton>
     </div>
 
   </b-container>
