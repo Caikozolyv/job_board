@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Repository\PresenceRepository;
+use App\State\DefaultStateProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -23,7 +24,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
         ),
         new Post(),
         new Delete(),
-        new Patch()
+        new Patch(processor: DefaultStateProcessor::class)
     ]
 )]
 #[ORM\Entity(repositoryClass: PresenceRepository::class)]

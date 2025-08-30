@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\Post;
 use App\DTO\JobInput;
 use App\Enum\StatusEnum;
 use App\Repository\JobRepository;
+use App\State\DefaultStateProcessor;
 use App\State\JobStateProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -42,7 +43,7 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
             processor: JobStateProcessor::class
         ),
         new Delete(),
-        new Patch()
+        new Patch(processor: DefaultStateProcessor::class)
     ]
 )]
 #[ORM\Entity(repositoryClass: JobRepository::class)]

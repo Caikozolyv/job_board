@@ -1,6 +1,6 @@
 <script>
 import {defineComponent, capitalize} from 'vue'
-import {BButton, BButtonGroup, BContainer, BTable} from "bootstrap-vue-next";
+import {BButton, BButtonGroup, BContainer, BFormInput, BTable} from "bootstrap-vue-next";
 import Form from './Form.vue';
 import axios from "axios";
 
@@ -9,6 +9,7 @@ export default defineComponent({
   data() {
     return {
       createMode: false,
+      edit: null,
       items: [],
       displayFields: [],
     }
@@ -25,9 +26,10 @@ export default defineComponent({
         .then(function(response) {
           self.items = response.data.member;
           let itemsKeys = Object.keys(response.data.member[0]);
-          // if (itemsKeys.includes('id')) {
-          //   itemsKeys.splice(itemsKeys.indexOf('id'), 1)
-          // }
+          // hide ids from table
+          if (itemsKeys.includes('id')) {
+            itemsKeys.splice(itemsKeys.indexOf('id'), 1)
+          }
           let itemsKeysFiltered = itemsKeys.filter((key) => !key.startsWith("@"));
           itemsKeysFiltered.push('actions')
           self.displayFields = itemsKeysFiltered;
@@ -36,20 +38,39 @@ export default defineComponent({
           console.log(error.response);
         });
   },
-  components: {Form, BButtonGroup, BButton, BContainer, BTable},
+  components: {BFormInput, Form, BButtonGroup, BButton, BContainer, BTable},
   methods: {
     capitalize,
     createNew() {
       this.createMode = !this.createMode;
     },
-    validate() {
+    editLine(item) {
+      let id = item.id
+      if (this.edit === id) {
+        // var name matching in DefaultStateProcessor ; find a way to be dynamic
+        let tempObj = {};
+        Object.keys(this.formFields).forEach((key, value) => {
+          if (Object.hasOwn(item, key)) {
+            tempObj[key] = item[key];
+          }
+        })
 
-    },
-    goToJobBoard() {
-
-    },
-    editLine(objectId) {
-
+        let patchUrl = 'http://localhost/api/' + this.objectName + '/' + id;
+        axios
+          .patch(patchUrl, { tempObj },
+          {
+            headers: {
+              'Content-type': 'application/merge-patch+json'
+            }
+          })
+          .then(function(response) {
+            // display toast if 200
+          })
+          .catch(error => {
+            console.log(error.response);
+          });
+      }
+      this.edit = this.edit !== id ? id : null;
     },
     async deleteLine(item) {
       let self = this;
@@ -93,9 +114,14 @@ export default defineComponent({
         :fields="this.displayFields"
         :primary-key="this.items.id"
     >
+        <template v-slot:cell()="{ value, item, field: { key }}">
+          <template v-if="edit !== item.id">{{ value }}</template>
+          <BFormInput v-else v-model="item[key]" />
+        </template>
+
       <template #cell(actions)="row">
         <BButtonGroup size="sm">
-          <BButton variant="primary" @click="editLine(id)">Edit</BButton>
+          <BButton variant="primary" @click="editLine(row.item)">{{ edit === row.item.id ? 'Save' : 'Edit' }}</BButton>
           <BButton variant="danger" @click="deleteLine(row.item)">Delete</BButton>
           <BButton variant="warning" @click="updateStatus(id)">Update</BButton>
         </BButtonGroup>
