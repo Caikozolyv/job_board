@@ -1,6 +1,6 @@
 <script>
 import {defineComponent, capitalize} from 'vue'
-import {BButton, BButtonGroup, BContainer, BFormInput, BTable} from "bootstrap-vue-next";
+import {BButton, BButtonGroup, BContainer, BFormInput, BLink, BTable} from "bootstrap-vue-next";
 import Form from './Form.vue';
 import axios from "axios";
 
@@ -38,7 +38,7 @@ export default defineComponent({
           console.log(error.response);
         });
   },
-  components: {BFormInput, Form, BButtonGroup, BButton, BContainer, BTable},
+  components: {BLink, BFormInput, Form, BButtonGroup, BButton, BContainer, BTable},
   methods: {
     capitalize,
     createNew() {
@@ -114,10 +114,19 @@ export default defineComponent({
         :fields="this.displayFields"
         :primary-key="this.items.id"
     >
-        <template v-slot:cell()="{ value, item, field: { key }}">
-          <template v-if="edit !== item.id">{{ value }}</template>
-          <BFormInput v-else v-model="item[key]" />
-        </template>
+      <template #cell(url)="data">
+        <BLink
+          :href="data.item.url"
+          target="_blank"
+        >
+          offre
+        </BLink>
+      </template>
+
+      <template v-slot:cell()="{ value, item, field: { key }}">
+        <template v-if="edit !== item.id">{{ value }}</template>
+        <BFormInput v-else v-model="item[key]" />
+      </template>
 
       <template #cell(actions)="row">
         <BButtonGroup size="sm">
