@@ -72,6 +72,10 @@ export default defineComponent({
       }
       this.edit = this.edit !== id ? id : null;
     },
+    cancel(item) {
+      let id = item.id;
+      this.edit = this.edit !== id ? id : null;
+    },
     async deleteLine(item) {
       let self = this;
       await axios
@@ -114,13 +118,15 @@ export default defineComponent({
         :fields="this.displayFields"
         :primary-key="this.items.id"
     >
-      <template #cell(url)="data">
+      <template #cell(url)="{ item, field: { key }}">
         <BLink
-          :href="data.item.url"
+          v-if="edit !== item.id"
+          :href="item.url"
           target="_blank"
         >
           offre
         </BLink>
+        <BFormInput v-else v-model="item[key]" />
       </template>
 
       <template v-slot:cell()="{ value, item, field: { key }}">
@@ -131,8 +137,9 @@ export default defineComponent({
       <template #cell(actions)="row">
         <BButtonGroup size="sm">
           <BButton variant="primary" @click="editLine(row.item)">{{ edit === row.item.id ? 'Save' : 'Edit' }}</BButton>
-          <BButton variant="danger" @click="deleteLine(row.item)">Delete</BButton>
-          <BButton variant="warning" @click="updateStatus(id)">Update</BButton>
+          <BButton v-if="edit === row.item.id" variant="danger" @click="cancel(row.item)">Cancel</BButton>
+          <BButton v-if="edit !== row.item.id" variant="danger" @click="deleteLine(row.item)">Delete</BButton>
+          <BButton v-if="edit !== row.item.id" variant="warning" @click="updateStatus(id)">Update</BButton>
         </BButtonGroup>
       </template>
 
