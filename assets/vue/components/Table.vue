@@ -1,6 +1,15 @@
 <script>
-import {defineComponent, capitalize} from 'vue'
-import {BButton, BButtonGroup, BContainer, BFormInput, BLink, BTable} from "bootstrap-vue-next";
+import {defineComponent, capitalize, toRaw} from 'vue'
+import {
+  BButton,
+  BButtonGroup,
+  BContainer,
+  BFormInput,
+  BLink,
+  BTable,
+  BFormSelect,
+  BFormSelectOption
+} from "bootstrap-vue-next";
 import Form from './Form.vue';
 import axios from "axios";
 
@@ -12,6 +21,10 @@ export default defineComponent({
       edit: null,
       items: [],
       displayFields: [],
+      websites: [],
+      websiteSelected: null,
+      presences: [],
+      presenceSelected: null
     }
   },
   async mounted() {
@@ -38,7 +51,17 @@ export default defineComponent({
           console.log(error.response);
         });
   },
-  components: {BLink, BFormInput, Form, BButtonGroup, BButton, BContainer, BTable},
+  components: {
+    BLink,
+    BFormInput,
+    Form,
+    BButtonGroup,
+    BButton,
+    BContainer,
+    BTable,
+    BFormSelect,
+    BFormSelectOption
+  },
   methods: {
     capitalize,
     createNew() {
@@ -49,6 +72,12 @@ export default defineComponent({
       if (this.edit === id) {
         // var name matching in DefaultStateProcessor ; find a way to be dynamic
         let tempObj = {};
+
+        if (item.presence && item.website) {
+          item['presence'] = toRaw(this.presences.find((presence) => presence.id === this.presenceSelected));
+          item['website'] = toRaw(this.websites.find((website) => website.id === this.websiteSelected));
+        }
+
         Object.keys(this.formFields).forEach((key, value) => {
           if (Object.hasOwn(item, key)) {
             tempObj[key] = item[key];
@@ -69,6 +98,44 @@ export default defineComponent({
           .catch(error => {
             console.log(error.response);
           });
+      } else if (
+          this.edit !== id
+          && item.website
+          && item.presence
+      ) {
+        this.websiteSelected = item.website.id;
+        this.presenceSelected = item.presence.id;
+        let getWebsitesUrl = 'http://localhost/api/websites';
+        let getPresencesUrl = 'http://localhost/api/presences';
+        let self = this;
+        axios
+            .get(getWebsitesUrl, {},
+                {
+                  headers: {
+                    'Content-type': 'application/ld+json'
+                  }
+                })
+            .then(function(response) {
+              self.websites = response.data.member;
+              // display toast if 200
+            })
+            .catch(error => {
+              console.log(error.response);
+            });
+        axios
+            .get(getPresencesUrl, {},
+                {
+                  headers: {
+                    'Content-type': 'application/ld+json'
+                  }
+                })
+            .then(function(response) {
+              self.presences = response.data.member;
+              // display toast if 200
+            })
+            .catch(error => {
+              console.log(error.response);
+            });
       }
       this.edit = this.edit !== id ? id : null;
     },
@@ -118,6 +185,12 @@ export default defineComponent({
         :fields="this.displayFields"
         :primary-key="this.items.id"
     >
+      <!-- For all cells in table -->
+      <template v-slot:cell()="{ value, item, field: { key }}">
+        <template v-if="edit !== item.id">{{ value }}</template>
+        <BFormInput v-else v-model="item[key]" />
+      </template>
+
       <template #cell(url)="{ item, field: { key }}">
         <BLink
           v-if="edit !== item.id"
@@ -129,9 +202,36 @@ export default defineComponent({
         <BFormInput v-else v-model="item[key]" />
       </template>
 
-      <template v-slot:cell()="{ value, item, field: { key }}">
-        <template v-if="edit !== item.id">{{ value }}</template>
-        <BFormInput v-else v-model="item[key]" />
+      <template #cell(website)="{ value, item, field: { key } }">
+        <template v-if="edit !== item.id">{{ item.website.name }}</template>
+        <BFormSelect
+            v-else
+            v-model="websiteSelected"
+            :selected="websiteSelected"
+        >
+          <BFormSelectOption
+            v-for="website in websites"
+            :value="website.id"
+          >
+            {{ website.name }}
+          </BFormSelectOption>
+        </BFormSelect>
+      </template>
+
+      <template #cell(presence)="{ value, item, field: { key } }">
+        <template v-if="edit !== item.id">{{ item.presence.name }}</template>
+        <BFormSelect
+            v-else
+            v-model="presenceSelected"
+            :selected="presenceSelected"
+        >
+          <BFormSelectOption
+              v-for="presence in presences"
+              :value="presence.id"
+          >
+            {{ presence.name }}
+          </BFormSelectOption>
+        </BFormSelect>
       </template>
 
       <template #cell(actions)="row">

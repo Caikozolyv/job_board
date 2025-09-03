@@ -10,13 +10,13 @@ use ApiPlatform\Metadata\Post;
 use App\DTO\JobInput;
 use App\Enum\StatusEnum;
 use App\Repository\JobRepository;
-use App\State\DefaultStateProcessor;
 use App\State\JobStateProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
@@ -36,15 +36,17 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
                 'creation_date',
                 'application_date',
                 'actions_to_take'
-            ]]
+                ],
+                'groups' => ['job:read']
+            ],
         ),
         new Post(
             input: JobInput::class,
             processor: JobStateProcessor::class
         ),
         new Delete(),
-        new Patch(processor: DefaultStateProcessor::class)
-    ]
+        new Patch(processor: JobStateProcessor::class)
+    ],
 )]
 #[ORM\Entity(repositoryClass: JobRepository::class)]
 class Job
@@ -52,48 +54,61 @@ class Job
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('job:read')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('job:read')]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('job:read')]
     private ?string $company = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('job:read')]
     private ?string $url = null;
 
     #[ORM\ManyToOne(inversedBy: 'jobs')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups('job:read')]
     private ?Website $website = null;
 
     #[Context(normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'd-m-Y'])]
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTime $creation_date = null;
+    #[Groups('job:read')]
+    private ?\DateTime $creationDate = null;
 
     #[Context(normalizationContext: [DateTimeNormalizer::FORMAT_KEY => 'd-m-Y'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $application_date = null;
+    #[Groups('job:read')]
+    private ?\DateTime $applicationDate = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('job:read')]
     private ?string $salary = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $asked_salary = null;
+    #[Groups('job:read')]
+    private ?string $askedSalary = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('job:read')]
     private ?string $city = null;
 
     #[ORM\ManyToOne(inversedBy: 'jobs')]
+    #[Groups('job:read')]
     private ?Presence $presence = null;
 
     /**
      * @var Collection<int, Action>
      */
     #[ORM\ManyToMany(targetEntity: Action::class, inversedBy: 'jobs')]
+    #[Groups('job:read')]
     private Collection $actions;
 
     #[ORM\Column]
+    #[Groups('job:read')]
     private ?int $status = null;
 
     /**
@@ -165,24 +180,24 @@ class Job
 
     public function getCreationDate(): ?\DateTime
     {
-        return $this->creation_date;
+        return $this->creationDate;
     }
 
-    public function setCreationDate(?\DateTime $creation_date): static
+    public function setCreationDate(?\DateTime $creationDate): static
     {
-        $this->creation_date = $creation_date;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
 
     public function getApplicationDate(): ?\DateTime
     {
-        return $this->application_date;
+        return $this->applicationDate;
     }
 
-    public function setApplicationDate(\DateTime $application_date): static
+    public function setApplicationDate(\DateTime $applicationDate): static
     {
-        $this->application_date = $application_date;
+        $this->applicationDate = $applicationDate;
 
         return $this;
     }
@@ -201,12 +216,12 @@ class Job
 
     public function getAskedSalary(): ?string
     {
-        return $this->asked_salary;
+        return $this->askedSalary;
     }
 
-    public function setAskedSalary(?string $asked_salary): static
+    public function setAskedSalary(?string $askedSalary): static
     {
-        $this->asked_salary = $asked_salary;
+        $this->askedSalary = $askedSalary;
 
         return $this;
     }
