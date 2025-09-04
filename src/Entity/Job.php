@@ -32,10 +32,10 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
                 'presence',
                 'website',
                 'salary',
-                'asked_salary',
-                'creation_date',
-                'application_date',
-                'actions_to_take'
+                'askedSalary',
+                'creationDate',
+                'applicationDate',
+                'actionsToTake'
                 ],
                 'groups' => ['job:read']
             ],
@@ -105,7 +105,7 @@ class Job
      */
     #[ORM\ManyToMany(targetEntity: Action::class, inversedBy: 'jobs')]
     #[Groups('job:read')]
-    private Collection $actions;
+    private Collection $actionsToTake;
 
     #[ORM\Column]
     #[Groups('job:read')]
@@ -121,7 +121,7 @@ class Job
 
     public function __construct()
     {
-        $this->actions = new ArrayCollection();
+        $this->actionsToTake = new ArrayCollection();
         $this->contact = new ArrayCollection();
     }
 
@@ -253,15 +253,15 @@ class Job
     /**
      * @return Collection<int, Action>
      */
-    public function getActions(): Collection
+    public function getActionsToTake(): Collection
     {
-        return $this->actions;
+        return $this->actionsToTake;
     }
 
     public function addAction(Action $action): static
     {
-        if (!$this->actions->contains($action)) {
-            $this->actions->add($action);
+        if (!$this->actionsToTake->contains($action)) {
+            $this->actionsToTake->add($action);
         }
 
         return $this;
@@ -269,7 +269,7 @@ class Job
 
     public function removeAction(Action $action): static
     {
-        $this->actions->removeElement($action);
+        $this->actionsToTake->removeElement($action);
 
         return $this;
     }
