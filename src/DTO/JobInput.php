@@ -13,8 +13,8 @@ class JobInput
     public int $presence;
     public int $website;
     public ?string $salary = null;
-    public ?string $asked_salary = null;
-    public ?\DateTime $creation_date = null;
-    public ?\DateTime $application_date = null;
-    public array $actions_to_take = [];
+    public ?string $askedSalary = null;
+    public ?\DateTime $creationDate = null;
+    public ?\DateTime $applicationDate = null;
+    public array $actions = [];
 }

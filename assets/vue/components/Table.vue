@@ -24,7 +24,9 @@ export default defineComponent({
       websites: [],
       websiteSelected: null,
       presences: [],
-      presenceSelected: null
+      presenceSelected: null,
+      actions: [],
+      actionsSelected: []
     }
   },
   async mounted() {
@@ -44,7 +46,7 @@ export default defineComponent({
             itemsKeys.splice(itemsKeys.indexOf('id'), 1)
           }
           let itemsKeysFiltered = itemsKeys.filter((key) => !key.startsWith("@"));
-          itemsKeysFiltered.push('actions')
+          itemsKeysFiltered.push('action_bar');
           self.displayFields = itemsKeysFiltered;
         })
         .catch(error => {
@@ -69,20 +71,25 @@ export default defineComponent({
     },
     editLine(item) {
       let id = item.id
+      // edit validation
       if (this.edit === id) {
         // var name matching in DefaultStateProcessor ; find a way to be dynamic
         let tempObj = {};
 
-        if (item.presence && item.website) {
+        // check if this is jobs board
+        if (item.presence && item.website && item.actions) {
           item['presence'] = toRaw(this.presences.find((presence) => presence.id === this.presenceSelected));
           item['website'] = toRaw(this.websites.find((website) => website.id === this.websiteSelected));
+          item['actions'] = toRaw(this.actions.filter((action) =>  this.actionsSelected.includes(action.id)));
         }
 
+        // simplyfying patch for simple objects (action, presence, website)
+        // keep only useful information ; remove @ fields and id
         Object.keys(this.formFields).forEach((key, value) => {
           if (Object.hasOwn(item, key)) {
             tempObj[key] = item[key];
           }
-        })
+        });
 
         let patchUrl = 'http://localhost/api/' + this.objectName + '/' + id;
         axios
@@ -98,15 +105,20 @@ export default defineComponent({
           .catch(error => {
             console.log(error.response);
           });
+      // clicking on edit to fetch websites presences and actions
+      // to populate select inputs
       } else if (
           this.edit !== id
           && item.website
           && item.presence
+          && item.actions
       ) {
         this.websiteSelected = item.website.id;
         this.presenceSelected = item.presence.id;
+        this.actionsSelected = item.actions.map((action) => action.id);
         let getWebsitesUrl = 'http://localhost/api/websites';
         let getPresencesUrl = 'http://localhost/api/presences';
+        let getActionsUrl = 'http://localhost/api/actions';
         let self = this;
         axios
             .get(getWebsitesUrl, {},
@@ -131,6 +143,20 @@ export default defineComponent({
                 })
             .then(function(response) {
               self.presences = response.data.member;
+              // display toast if 200
+            })
+            .catch(error => {
+              console.log(error.response);
+            });
+        axios
+            .get(getActionsUrl, {},
+                {
+                  headers: {
+                    'Content-type': 'application/ld+json'
+                  }
+                })
+            .then(function(response) {
+              self.actions = response.data.member;
               // display toast if 200
             })
             .catch(error => {
@@ -234,7 +260,26 @@ export default defineComponent({
         </BFormSelect>
       </template>
 
-      <template #cell(actions)="row">
+      <template #cell(actions)="{ value, item, field: { key }}">
+        <template v-if="edit !== item.id" v-for="action in item.actions">
+          <span>{{ action.name }}</span><br>
+        </template>
+        <BFormSelect
+            v-else
+            v-model="actionsSelected"
+            :selected="actionsSelected"
+            :multiple="true"
+        >
+          <BFormSelectOption
+              v-for="action in actions"
+              :value="action.id"
+          >
+            {{ action.name }}
+          </BFormSelectOption>
+        </BFormSelect>
+      </template>
+
+      <template #cell(action_bar)="row">
         <BButtonGroup size="sm">
           <BButton variant="primary" @click="editLine(row.item)">{{ edit === row.item.id ? 'Save' : 'Edit' }}</BButton>
           <BButton v-if="edit === row.item.id" variant="danger" @click="cancel(row.item)">Cancel</BButton>

@@ -12,6 +12,7 @@ use App\State\DefaultStateProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 #[ApiResource(
@@ -33,9 +34,11 @@ class Action
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('job:read')]
     private ?int $id = null;
 
     #[ORM\Column(name: 'action', length: 255)]
+    #[Groups('job:read')]
     private ?string $name = null;
 
     /**

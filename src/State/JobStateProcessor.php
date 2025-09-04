@@ -33,7 +33,7 @@ class JobStateProcessor implements ProcessorInterface
         if ($data instanceof JobInput && $operation instanceof Post) {
             $presence = $presenceRepo->find($data->presence);
             $website = $websiteRepo->find($data->website);
-            $actions = $actionsRepo->findBy(['id' => $data->actions_to_take]);
+            $actions = $actionsRepo->findBy(['id' => $data->actions]);
 
             $job = new Job();
             $job
@@ -44,34 +44,46 @@ class JobStateProcessor implements ProcessorInterface
                 ->setPresence($presence)
                 ->setWebsite($website)
                 ->setSalary($data->salary)
-                ->setAskedSalary($data->asked_salary)
-                ->setCreationDate($data->creation_date)
-                ->setApplicationDate($data->application_date)
-                ->setStatus(1);
-
-            foreach ($actions as $action) {
-                $job->addAction($action);
-            }
+                ->setAskedSalary($data->askedSalary)
+                ->setCreationDate($data->creationDate)
+                ->setApplicationDate($data->applicationDate)
+                ->setStatus(1)
+                ->addActions($actions);
 
             return $this->persistProcessor->process($job, $operation, $uriVariables, $context);
         }
 
+        // for now, when editing a job, flush it and rewrite everything
         if ($data instanceof Job && $operation instanceof Patch) {
+            // getting data sent because its different from api platform
             $request = $this->requestStack->getCurrentRequest();
             $inputData = json_decode($request->getContent(), true);
 
+            // getting data for nested relations and dates
             $presenceId = $inputData['tempObj']['presence']['id'];
             $websiteId = $inputData['tempObj']['website']['id'];
+            $actionIds = array_map(fn($action) => $action['id'], $inputData['tempObj']['actions']);
+            $creationDate = $inputData['tempObj']['creationDate'];
+            $applicationDate = $inputData['tempObj']['applicationDate'];
 
             $presence = $presenceRepo->find($presenceId);
             $website = $websiteRepo->find($websiteId);
+            $actions = $actionsRepo->findBy(['id' => $actionIds]);
 
+            // removing nested relations and dates to create dynamic setters
             unset($inputData['tempObj']['presence']);
             unset($inputData['tempObj']['website']);
+            unset($inputData['tempObj']['actions']);
+            unset($inputData['tempObj']['creationDate']);
+            unset($inputData['tempObj']['applicationDate']);
 
             $data->setPresence($presence);
             $data->setWebsite($website);
+            $data->addActions($actions);
+            $data->setCreationDate(\DateTime::createFromFormat('d-m-Y', $creationDate));
+            $data->setApplicationDate(\DateTime::createFromFormat('d-m-Y', $applicationDate));
 
+            // dynamic setters for the remaining properties
             foreach ($inputData['tempObj'] as $field => $value) {
                 $setter = 'set' . ucfirst($field);
                 $data->$setter($value);

@@ -53,19 +53,19 @@ class DataFormJob implements DataFormInterface
                 'type' => 'text',
                 'content' => ''
             ],
-            'asked_salary' => [
+            'askedSalary' => [
                 'type' => 'text',
                 'content' => ''
             ],
-            'creation_date' => [
+            'creationDate' => [
                 'type' => 'date',
                 'content' => ''
             ],
-            'application_date' => [
+            'applicationDate' => [
                 'type' => 'date',
                 'content' => ''
             ],
-            'actions_to_take' => [
+            'actions' => [
                 'type' => 'select',
                 'options' => $actionsFields,
                 'selected' => [],
