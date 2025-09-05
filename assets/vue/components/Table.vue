@@ -11,6 +11,7 @@ import {
   BFormSelectOption
 } from "bootstrap-vue-next";
 import Form from './Form.vue';
+import CellSelect from './CellSelect.vue';
 import axios from "axios";
 
 export default defineComponent({
@@ -62,14 +63,15 @@ export default defineComponent({
     BContainer,
     BTable,
     BFormSelect,
-    BFormSelectOption
+    BFormSelectOption,
+    CellSelect
   },
   methods: {
     capitalize,
     createNew() {
       this.createMode = !this.createMode;
     },
-    editLine(item) {
+    async editLine(item) {
       let id = item.id
       // edit validation
       if (this.edit === id) {
@@ -80,7 +82,7 @@ export default defineComponent({
         if (item.presence && item.website && item.actions) {
           item['presence'] = toRaw(this.presences.find((presence) => presence.id === this.presenceSelected));
           item['website'] = toRaw(this.websites.find((website) => website.id === this.websiteSelected));
-          item['actions'] = toRaw(this.actions.filter((action) =>  this.actionsSelected.includes(action.id)));
+          item['actions'] = toRaw(this.actions.filter((action) => this.actionsSelected.includes(action.id)));
         }
 
         // simplyfying patch for simple objects (action, presence, website)
@@ -92,7 +94,7 @@ export default defineComponent({
         });
 
         let patchUrl = 'http://localhost/api/' + this.objectName + '/' + id;
-        axios
+        await axios
           .patch(patchUrl, { tempObj },
           {
             headers: {
@@ -120,7 +122,8 @@ export default defineComponent({
         let getPresencesUrl = 'http://localhost/api/presences';
         let getActionsUrl = 'http://localhost/api/actions';
         let self = this;
-        axios
+
+        await axios
             .get(getWebsitesUrl, {},
                 {
                   headers: {
@@ -134,7 +137,7 @@ export default defineComponent({
             .catch(error => {
               console.log(error.response);
             });
-        axios
+        await axios
             .get(getPresencesUrl, {},
                 {
                   headers: {
@@ -148,7 +151,7 @@ export default defineComponent({
             .catch(error => {
               console.log(error.response);
             });
-        axios
+        await axios
             .get(getActionsUrl, {},
                 {
                   headers: {
@@ -230,53 +233,37 @@ export default defineComponent({
 
       <template #cell(website)="{ value, item, field: { key } }">
         <template v-if="edit !== item.id">{{ item.website.name }}</template>
-        <BFormSelect
-            v-else
-            v-model="websiteSelected"
-            :selected="websiteSelected"
-        >
-          <BFormSelectOption
-            v-for="website in websites"
-            :value="website.id"
-          >
-            {{ website.name }}
-          </BFormSelectOption>
-        </BFormSelect>
+        <CellSelect
+          v-else
+          :values="this.websites"
+          v-model:selected="this.websiteSelected"
+          objectName="websites"
+          :multiple="false"
+      />
       </template>
 
       <template #cell(presence)="{ value, item, field: { key } }">
         <template v-if="edit !== item.id">{{ item.presence.name }}</template>
-        <BFormSelect
+        <CellSelect
             v-else
-            v-model="presenceSelected"
-            :selected="presenceSelected"
-        >
-          <BFormSelectOption
-              v-for="presence in presences"
-              :value="presence.id"
-          >
-            {{ presence.name }}
-          </BFormSelectOption>
-        </BFormSelect>
+            :values="this.presences"
+            v-model:selected="this.presenceSelected"
+            objectName="presences"
+            :multiple="false"
+        />
       </template>
 
       <template #cell(actions)="{ value, item, field: { key }}">
         <template v-if="edit !== item.id" v-for="action in item.actions">
           <span>{{ action.name }}</span><br>
         </template>
-        <BFormSelect
+        <CellSelect
             v-else
-            v-model="actionsSelected"
-            :selected="actionsSelected"
+            :values="this.actions"
+            v-model:selected="this.actionsSelected"
+            objectName="actions"
             :multiple="true"
-        >
-          <BFormSelectOption
-              v-for="action in actions"
-              :value="action.id"
-          >
-            {{ action.name }}
-          </BFormSelectOption>
-        </BFormSelect>
+        />
       </template>
 
       <template #cell(action_bar)="row">
@@ -284,7 +271,6 @@ export default defineComponent({
           <BButton variant="primary" @click="editLine(row.item)">{{ edit === row.item.id ? 'Save' : 'Edit' }}</BButton>
           <BButton v-if="edit === row.item.id" variant="danger" @click="cancel(row.item)">Cancel</BButton>
           <BButton v-if="edit !== row.item.id" variant="danger" @click="deleteLine(row.item)">Delete</BButton>
-          <BButton v-if="edit !== row.item.id" variant="warning" @click="updateStatus(id)">Update</BButton>
         </BButtonGroup>
       </template>
 
