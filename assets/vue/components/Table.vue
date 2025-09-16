@@ -75,9 +75,6 @@ export default defineComponent({
       let id = item.id
       // edit validation
       if (this.edit === id) {
-        // var name matching in DefaultStateProcessor ; find a way to be dynamic
-        let tempObj = {};
-
         // check if this is jobs board
         if (item.presence && item.website && item.actions) {
           item['presence'] = toRaw(this.presences.find((presence) => presence.id === this.presenceSelected));
@@ -85,13 +82,8 @@ export default defineComponent({
           item['actions'] = toRaw(this.actions.filter((action) => this.actionsSelected.includes(action.id)));
         }
 
-        // simplyfying patch for simple objects (action, presence, website)
-        // keep only useful information ; remove @ fields and id
-        Object.keys(this.formFields).forEach((key, value) => {
-          if (Object.hasOwn(item, key)) {
-            tempObj[key] = item[key];
-          }
-        });
+        // var name matching in DefaultStateProcessor ; find a way to be dynamic
+        let tempObj = this.prepareObjectToSend(item);
 
         let patchUrl = 'http://localhost/api/' + this.objectName + '/' + id;
         await axios
@@ -193,9 +185,53 @@ export default defineComponent({
           console.log(error.response);
         });
     },
-    updateStatus(objectId) {
+    async updateStatus(item, status) {
+      item.status = status;
+      let tempObj = this.prepareObjectToSend(item);
+      let patchUrl = 'http://localhost/api/' + this.objectName + '/' + item.id;
+      await axios
+          .patch(patchUrl, {tempObj},
+              {
+                headers: {
+                  'Content-type': 'application/merge-patch+json'
+                }
+              })
+          .then(function (response) {
+            // display toast if 200
+          })
+          .catch(error => {
+            console.log(error.response);
+          });
+    },
+    getRowClass(item, type) {
+      // guard clause if not a row (header, footer...)
+      if (!item || type !== 'row' || item.status === 1) {
+        return '';
+      }
 
-    }
+      // TODO make it dynamic with axios call to get status enum
+      switch (item.status) {
+        case 2:
+          return 'answered';
+        case 3:
+          return 'rejected';
+        case 4:
+          return 'meeting';
+        case 5:
+          return 'success';
+      }
+    },
+    // simplyfying patch for simple objects (action, presence, website)
+    // keep only useful information ; remove @ fields and id
+    prepareObjectToSend(item) {
+      let tempObj = {};
+      Object.keys(this.formFields).forEach((key, value) => {
+        if (Object.hasOwn(item, key)) {
+          tempObj[key] = item[key];
+        }
+      });
+      return tempObj;
+    },
   },
   props: {
     objectName: String,
@@ -208,11 +244,11 @@ export default defineComponent({
   <h1>{{ capitalize(this.objectName) }}</h1>
   <b-container>
     <BTable
-        striped
         hover
         :items="this.items"
         :fields="this.displayFields"
-        :primary-key="this.items.id"
+        primary-key="id"
+        :tbody-tr-class="getRowClass"
     >
       <!-- For all cells in table -->
       <template v-slot:cell()="{ value, item, field: { key }}">
@@ -271,6 +307,8 @@ export default defineComponent({
           <BButton variant="primary" @click="editLine(row.item)">{{ edit === row.item.id ? 'Save' : 'Edit' }}</BButton>
           <BButton v-if="edit === row.item.id" variant="danger" @click="cancel(row.item)">Cancel</BButton>
           <BButton v-if="edit !== row.item.id" variant="danger" @click="deleteLine(row.item)">Delete</BButton>
+          <a v-if="row.item.status === 1" type="button" @click="updateStatus(row.item, 2)">✅</a>
+          <a type="button" @click="updateStatus(row.item, 3)">❌</a>
         </BButtonGroup>
       </template>
 
@@ -286,6 +324,24 @@ export default defineComponent({
   </b-container>
 </template>
 
-<style scoped>
+<style>
+  .answered {
+    --bs-table-bg: #F8CDA0;
+    --bs-table-hover-bg: #F5BA7A;
+  }
 
+  .rejected {
+    --bs-table-bg: #FB9B88;
+    --bs-table-hover-bg: #F97B62;
+  }
+
+  .meeting {
+    --bs-table-bg: #FFE485;
+    --bs-table-hover-bg: #FFDC5C;
+  }
+
+  .success {
+    --bs-table-bg: #C6D8AF;
+    --bs-table-hover-bg: #A7C284;
+  }
 </style>

@@ -70,6 +70,10 @@ class DataFormJob implements DataFormInterface
                 'options' => $actionsFields,
                 'selected' => [],
                 'multiple' => true
+            ],
+            'status' => [
+                'type' => 'integer',
+                'content' => ''
             ]
 
         ];
