@@ -245,6 +245,7 @@ export default defineComponent({
   <b-container>
     <BTable
         hover
+        borderless
         :items="this.items"
         :fields="this.displayFields"
         primary-key="id"
@@ -304,11 +305,11 @@ export default defineComponent({
 
       <template #cell(action_bar)="row">
         <BButtonGroup size="sm">
-          <BButton variant="primary" @click="editLine(row.item)">{{ edit === row.item.id ? 'Save' : 'Edit' }}</BButton>
-          <BButton v-if="edit === row.item.id" variant="danger" @click="cancel(row.item)">Cancel</BButton>
-          <BButton v-if="edit !== row.item.id" variant="danger" @click="deleteLine(row.item)">Delete</BButton>
-          <a v-if="row.item.status === 1" type="button" @click="updateStatus(row.item, 2)">✅</a>
-          <a type="button" @click="updateStatus(row.item, 3)">❌</a>
+          <a type="button" @click="editLine(row.item)" :title="edit === row.item.id ? 'Save' : 'Edit️'">{{ edit === row.item.id ? '✅' : '✏️' }}</a>
+          <a v-if="edit === row.item.id" type="button" title="Cancel" @click="cancel(row.item)">🔙</a>
+          <a v-if="edit !== row.item.id" type="button" title="Delete" @click="deleteLine(row.item)">❌</a>
+          <a v-if="row.item.status !== 2" type="button" title="Answered" @click="updateStatus(row.item, 2)">⏭</a>
+          <a v-if="row.item.status !== 3" type="button" title="Rejected" @click="updateStatus(row.item, 3)">👎</a>
         </BButtonGroup>
       </template>
 
