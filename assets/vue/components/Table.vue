@@ -307,9 +307,13 @@ export default defineComponent({
         <BButtonGroup size="sm">
           <a type="button" @click="editLine(row.item)" :title="edit === row.item.id ? 'Save' : 'Edit️'">{{ edit === row.item.id ? '✅' : '✏️' }}</a>
           <a v-if="edit === row.item.id" type="button" title="Cancel" @click="cancel(row.item)">🔙</a>
-          <a v-if="edit !== row.item.id" type="button" title="Delete" @click="deleteLine(row.item)">❌</a>
-          <a v-if="row.item.status !== 2" type="button" title="Answered" @click="updateStatus(row.item, 2)">⏭</a>
-          <a v-if="row.item.status !== 3" type="button" title="Rejected" @click="updateStatus(row.item, 3)">👎</a>
+
+          <a v-if="edit !== row.item.id && this.objectName !== 'jobs'" type="button" title="Delete" @click="deleteLine(row.item)">❌</a>
+
+          <span id="statusButtons" v-if="this.objectName === 'jobs'">
+            <a v-if="row.item.status !== 2" type="button" title="Answered" @click="updateStatus(row.item, 2)">⏭</a>
+            <a v-if="row.item.status !== 3" type="button" title="Rejected" @click="updateStatus(row.item, 3)">👎</a>
+          </span>
         </BButtonGroup>
       </template>
 
@@ -344,5 +348,9 @@ export default defineComponent({
   .success {
     --bs-table-bg: #C6D8AF;
     --bs-table-hover-bg: #A7C284;
+  }
+
+  #statusButtons {
+    display: inherit;
   }
 </style>
